@@ -1,4 +1,4 @@
 .env
 __pycache__
-db
+pw.db
 venv
