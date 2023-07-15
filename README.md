@@ -13,5 +13,6 @@ venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-2. Run `create-db.py` to create a fresh SQLite database
-3. `flask run` will run the API. Directly executing `index.py` will run in debug mode.
+2. Create a folder called "db" in the "app" directory.
+3. Run `create-db.py` to create a fresh SQLite database
+4. `flask run` will run the API. Directly executing `index.py` will run in debug mode.
