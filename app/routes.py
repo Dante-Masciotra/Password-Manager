@@ -123,7 +123,7 @@ def delete_user(current_user, username):
 @app.route('/login',  methods=['POST'])
 def login():
     try:
-        data = request.json()
+        data = request.get_json()
         if not data or not data['username'] or not data['password']:
             return jsonify({'message': 'Invalid or missing credentials.'}), 401
         user = User.query.filter_by(username=data['username']).first()
