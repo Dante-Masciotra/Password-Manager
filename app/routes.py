@@ -144,10 +144,14 @@ def register():
         data = request.get_json()
         if not re.search(r".+@.+\..+", data['email']) or re.search(r"[%\\\?\"\'~/\$\*\{\}\s]", data['email']) or len(data['email']) > 128 or not data['email'].isascii():
             return jsonify({'message': 'Invalid email. Check for any special characters that may be present, and ensure that the entered email address is formatted correctly.'}), 401
-        if not data['username'] or re.search(r"[%\\\?\"\'~/\$\*\{\}\s]", data['username']) or len(data['username']) > 32 or not data['username'].isascii():
-            return jsonify({'message': 'Invalid username. Check for any special characters that may be present.'}), 401
+        if not data['username'] or re.search(r"[%\\\?\"\'~/\$\*\{\}\s]", data['username']) or len(data['username']) > 32 or len(data['username']) < 1 or not data['username'].isascii():
+            return jsonify({'message': 'Invalid username. Check for any special characters that may be present, and that your username is less than 32 characters in length. Usernames cannot be blank'}), 401
         if not data['password'] or re.search(r"[%\\\?\"\'~/\$\*\{\}\s]", data['password']) or len(data["password"]) < 8 or len(data['password']) > 256 or not data['password'].isascii():
-            return jsonify({'message': 'Invalid password. Check for any special characters that may be present.'}), 401
+            return jsonify({'message': 'Invalid password. Check for any special characters that may be present, and ensure that your password is not too short (at least 8 characters).'}), 401
+        if User.query.filter_by(email=data['email']).first():
+            return jsonify({'message': "An account with the given email address is already registered."}), 401
+        if User.query.filter_by(username=data['username']).first():
+            return jsonify({'message': "Username is taken."}), 401
         hashed_pw = generate_password_hash(data['password'], method='sha256')
         user = User( username=data['username'], email=data['email'], password=hashed_pw, admin=False)
         db.session.add(user)
