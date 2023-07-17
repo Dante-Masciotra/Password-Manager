@@ -123,13 +123,13 @@ def delete_user(current_user, username):
 @app.route('/login',  methods=['POST'])
 def login():
     try:
-        auth = request.authorization
-        if not auth or not auth.username or not auth.password:
+        data = request.json()
+        if not data or not data['username'] or not data['password']:
             return jsonify({'message': 'Invalid or missing credentials.'}), 401
-        user = User.query.filter_by(username=auth.username).first()
+        user = User.query.filter_by(username=data['username']).first()
         if not user:
             return jsonify({'message': 'User not found.'}), 404
-        if check_password_hash(user.password, auth.password):
+        if check_password_hash(user.password, data['password']):
             token = jwt.encode({'username': user.username, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=15)}, app.config['SECRET_KEY'], algorithm='HS256')
             refresh = jwt.encode({'username': user.username, 'exp': datetime.datetime.utcnow() + datetime.timedelta(days=15)}, app.config['SECRET_KEY'], algorithm='HS256')
             return jsonify({'token': token, 'refresh': refresh})
