@@ -120,7 +120,7 @@ def delete_user(current_user, username):
         print(e)
         return jsonify({'message': "An error occurred."}), 500
 
-@app.route('/login')
+@app.route('/login',  methods=['POST'])
 def login():
     try:
         auth = request.authorization
