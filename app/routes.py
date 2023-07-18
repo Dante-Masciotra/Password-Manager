@@ -1,6 +1,6 @@
 from index import app, db
 from flask import request, jsonify
-from app.models import User
+from app.models import User, Password
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
 import uuid
@@ -181,3 +181,20 @@ def refresh_token(current_user):
     except Exception as e:
         print(e)
         return jsonify({'message': "An error occurred."}), 500
+    
+
+@app.route('/AddPassword', methods=['POST'])
+def AddPassword():
+    try:
+        data = request.get_json()
+        hashed_pw = generate_password_hash(data['password'], method='sha256')
+        password = Password( user=data['user'], website=data['website'], password=hashed_pw)
+        db.session.add(password)
+    except Exception as e:
+        print(e)
+        return jsonify({'message': "An error occurred."}), 500
+    try:
+        db.session.commit()
+    except:
+        return jsonify({'message': 'Failed to commit changes to database.'}), 500
+    return jsonify({'message': 'Password Added.'})
