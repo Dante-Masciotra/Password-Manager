@@ -7,4 +7,9 @@ class User(db.Model):
     username = db.Column(db.String(256))
     password = db.Column(db.String(256))
     admin = db.Column(db.Boolean)
-    
+
+class Password(db.Model):
+    __tablename__ = 'password'
+    id = db.Column(db.Integer, primary_key=True)
+    website = db.Column(db.String(256))
+    password = db.Column(db.String(256))
