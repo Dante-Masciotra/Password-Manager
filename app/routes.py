@@ -189,6 +189,7 @@ def refresh_token(current_user):
     
 
 @app.route('/AddPassword', methods=['POST'])
+@require_token
 def AddPassword():
     try:
         data = request.get_json()
