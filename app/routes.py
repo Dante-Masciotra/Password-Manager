@@ -89,6 +89,7 @@ def get_user(current_user, username):
 @require_token
 def get_current_user(current_user):
     data = {}
+    data['id'] = current_user.id 
     data['username'] = current_user.username 
     return jsonify(data) 
 
@@ -191,6 +192,11 @@ def refresh_token(current_user):
 def AddPassword():
     try:
         data = request.get_json()
+        if not data or not data['website']:
+            return jsonify({'message': 'Missing Website.'}), 401
+        if not data or not data['password']:
+            return jsonify({'message': 'Missing Password.'}), 401
+        
         hashed_pw = generate_password_hash(data['password'], method='sha256')
         password = Password( user=data['user'], website=data['website'], password=hashed_pw)
         db.session.add(password)
