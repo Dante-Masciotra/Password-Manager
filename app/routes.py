@@ -40,6 +40,11 @@ def require_refresh_token(function):
         return function(current_user, *args, **kwargs)
     return decorator
 
+@app.route('/authenticate')
+@require_token
+def authenticate(_):
+    return jsonify({'message': "Authentication successful."})
+
 @app.route('/user')
 @require_token
 def get_users(current_user):
