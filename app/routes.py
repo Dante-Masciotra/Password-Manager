@@ -190,7 +190,7 @@ def refresh_token(current_user):
 
 @app.route('/AddPassword', methods=['POST'])
 @require_token
-def AddPassword():
+def AddPassword(current_user):
     try:
         data = request.get_json()
         if not data or not data['website']:
@@ -199,7 +199,7 @@ def AddPassword():
             return jsonify({'message': 'Missing Password.'}), 401
         
         hashed_pw = generate_password_hash(data['password'], method='sha256')
-        password = Password( user=data['user'], website=data['website'], password=hashed_pw)
+        password = Password( user=current_user.id, website=data['website'], password=hashed_pw)
         db.session.add(password)
     except Exception as e:
         print(e)
