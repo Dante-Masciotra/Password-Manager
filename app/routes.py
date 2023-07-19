@@ -85,7 +85,6 @@ def get_user(current_user, username):
 def get_current_user(current_user):
     data = {}
     data['username'] = current_user.username 
-    data['admin'] = current_user.admin
     return jsonify(data) 
 
 @app.route('/user', methods=['POST'])
