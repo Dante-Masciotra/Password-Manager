@@ -220,3 +220,22 @@ def GetPassword(current_user):
         data.append([password.website,decrypt_Password(password.password,current_user.key)])
         # data[1].append()
     return jsonify(data) 
+
+@app.route('/editpassword', methods=['PUT'])
+@require_token
+def edit_password(current_user):
+    try:
+        data = request.get_json()
+        print(data)
+        password = Password.query.filter_by(user=current_user.id, website=data['website']).first()
+        db.session.delete(password)
+        password = Password(user=current_user.id, website=data['website'], password=encrypt_Password(data['password'], current_user.key))
+        db.session.add(password)
+    except Exception as e:
+        print(e)
+        return jsonify({'message': "An error occurred."}), 500
+    try:
+        db.session.commit()
+    except:
+        return jsonify({'message': 'Failed to commit changes to database.'}), 500
+    return jsonify({'message': 'Password modified.'})
