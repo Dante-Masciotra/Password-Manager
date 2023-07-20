@@ -6,6 +6,7 @@ class User(db.Model):
     email = db.Column(db.String(256))
     username = db.Column(db.String(256))
     password = db.Column(db.String(256))
+    key = db.Column(db.String(256))
     admin = db.Column(db.Boolean)
 
 class Password(db.Model):

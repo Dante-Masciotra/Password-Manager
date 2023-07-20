@@ -1,3 +1,4 @@
+from app.encryption import decrypt_Password, encrypt_Password, generate_Key
 from index import app, db
 from flask import request, jsonify
 from app.models import User, Password
@@ -158,7 +159,7 @@ def register():
         if User.query.filter_by(username=data['username']).first():
             return jsonify({'message': "Username is taken."}), 401
         hashed_pw = generate_password_hash(data['password'], method='sha256')
-        user = User( username=data['username'], email=data['email'], password=hashed_pw, admin=False)
+        user = User( username=data['username'], email=data['email'], password=hashed_pw, key=generate_Key() ,admin=False)
         db.session.add(user)
     except Exception as e:
         print(e)
@@ -197,9 +198,8 @@ def AddPassword(current_user):
             return jsonify({'message': 'Missing Website.'}), 401
         if not data or not data['password']:
             return jsonify({'message': 'Missing Password.'}), 401
-        
-        hashed_pw = generate_password_hash(data['password'], method='sha256')
-        password = Password( user=current_user.id, website=data['website'], password=hashed_pw)
+        encPassword = encrypt_Password(data['password'],current_user.key)
+        password = Password( user=current_user.id, website=data['website'], password=encPassword)
         db.session.add(password)
     except Exception as e:
         print(e)
@@ -209,3 +209,13 @@ def AddPassword(current_user):
     except:
         return jsonify({'message': 'Failed to commit changes to database.'}), 500
     return jsonify({'message': 'Password Added.'})
+
+@app.route('/GetPassword')
+@require_token
+def GetPassword(current_user):
+    data = []
+    passwords = db.session.execute(db.select(Password)
+            .filter_by(user=current_user.id)).scalars()
+    for password in passwords:
+        data.append(decrypt_Password(password.password,current_user.key))
+    return jsonify(data) 
