@@ -213,10 +213,10 @@ def AddPassword(current_user):
 @app.route('/GetPassword')
 @require_token
 def GetPassword(current_user):
-    data = [[],[]]
+    data = []
     passwords = db.session.execute(db.select(Password)
             .filter_by(user=current_user.id)).scalars()
     for password in passwords:
-        data[0].append(password.website)
-        data[1].append(decrypt_Password(password.password,current_user.key))
+        data.append([password.website,decrypt_Password(password.password,current_user.key)])
+        # data[1].append()
     return jsonify(data) 
