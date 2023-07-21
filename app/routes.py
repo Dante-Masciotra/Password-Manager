@@ -226,7 +226,6 @@ def GetPassword(current_user):
 def edit_password(current_user):
     try:
         data = request.get_json()
-        print(data)
         password = Password.query.filter_by(user=current_user.id, website=data['website']).first()
         db.session.delete(password)
         password = Password(user=current_user.id, website=data['website'], password=encrypt_Password(data['password'], current_user.key))
