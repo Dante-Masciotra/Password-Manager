@@ -239,3 +239,18 @@ def edit_password(current_user):
     except:
         return jsonify({'message': 'Failed to commit changes to database.'}), 500
     return jsonify({'message': 'Password modified.'})
+
+@app.route('/deletepassword/<website>', methods=['DELETE'])
+@require_token
+def delete_password(current_user, website):
+    try:
+        password = Password.query.filter_by(user=current_user.id, website=website).first()
+        db.session.delete(password)
+    except Exception as e:
+        print(e)
+        return jsonify({'message': "An error occurred."}), 500
+    try:
+        db.session.commit()
+    except:
+        return jsonify({'message': 'Failed to commit changes to database.'}), 500
+    return jsonify({'message': 'Password deleted.'})
