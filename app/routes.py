@@ -218,7 +218,6 @@ def GetPassword(current_user):
             .filter_by(user=current_user.id)).scalars()
     for password in passwords:
         data.append([password.website,decrypt_Password(password.password,current_user.key)])
-        # data[1].append()
     return jsonify(data) 
 
 @app.route('/editpassword', methods=['PUT'])
