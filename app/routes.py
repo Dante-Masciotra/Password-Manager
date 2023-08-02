@@ -1,4 +1,4 @@
-from app.encryption import decrypt_Password, encrypt_Password, generate_Key
+from app.encryption import decrypt_Password, derive_key, encrypt_Password
 from index import app, db
 from flask import request, jsonify
 from app.models import User, Password
@@ -159,7 +159,7 @@ def register():
         if User.query.filter_by(username=data['username']).first():
             return jsonify({'message': "Username is taken."}), 401
         hashed_pw = generate_password_hash(data['password'], method='sha256')
-        user = User( username=data['username'], email=data['email'], password=hashed_pw, key=generate_Key() ,admin=False)
+        user = User( username=data['username'], email=data['email'], password=hashed_pw, key=derive_key(bytes(data['password'],'utf-8')),admin=False)
         db.session.add(user)
     except Exception as e:
         print(e)
