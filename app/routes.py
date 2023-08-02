@@ -152,7 +152,7 @@ def register():
             return jsonify({'message': 'Invalid email. Check for any special characters that may be present, and ensure that the entered email address is formatted correctly.'}), 401
         if not data['username'] or re.search(r"[%\\\?\"\'~/\$\*\{\}\s]", data['username']) or len(data['username']) > 32 or len(data['username']) < 1 or not data['username'].isascii():
             return jsonify({'message': 'Invalid username. Check for any special characters that may be present, and that your username is less than 32 characters in length. Usernames cannot be blank'}), 401
-        if not data['password'] or re.search(r"[%\\\?\"\'~/\$\*\{\}\s]", data['password']) or len(data["password"]) < 8 or len(data['password']) > 256 or not data['password'].isascii():
+        if not data['password'] or re.search(r"[%\\\?\"\'~/\$\*\{\}\s]", data['password']) or len(data["password"]) < 8 or not data['password'].isascii():
             return jsonify({'message': 'Invalid password. Check for any special characters that may be present, and ensure that your password is not too short (at least 8 characters).'}), 401
         if User.query.filter_by(email=data['email']).first():
             return jsonify({'message': "An account with the given email address is already registered."}), 401
